@@ -28,25 +28,23 @@ describe Rack::JSONP do
     end
 
     it 'should not modify the response status code' do
-      @jsonp_response_status.should == @response_status
+      expect(@jsonp_response_status).to eq(@response_status)
     end
 
     it 'should update the response content length to the new value' do
-      @jsonp_response_headers['Content-Length'].should == '32'
+      expect(@jsonp_response_headers['Content-Length']).to eq('32')
     end
 
     it 'should set the response content type as application/javascript' do
-      @jsonp_response_headers['Content-Type'].should == 'application/javascript'
+      expect(@jsonp_response_headers['Content-Type']).to eq('application/javascript')
     end
 
     it 'should wrap the response body in the Javasript callback' do
-      @jsonp_response_body.should == ["#{@callback}(#{@response_body.first});"]
+      expect(@jsonp_response_body).to eq(["#{@callback}(#{@response_body.first});"])
     end
-
   end
 
   describe 'when a valid jsonp request is made with multibyte characters' do
-
     before :each do
       @response_headers['Content-Type'] = 'application/json; charset=utf-8'
       @response_body = ['{"key":"√alue"}']
@@ -56,26 +54,23 @@ describe Rack::JSONP do
     end
 
     it 'should not modify the response status code' do
-      @jsonp_response_status.should == @response_status
+      expect(@jsonp_response_status).to eq(@response_status)
     end
 
     it 'should update the response content length to the new value' do
-      @jsonp_response_headers['Content-Length'].should == '34'
+      expect(@jsonp_response_headers['Content-Length']).to eq('34')
     end
 
     it 'should set the response content type as application/javascript without munging the charset' do
-      @jsonp_response_headers['Content-Type'].should == 'application/javascript; charset=utf-8'
+      expect(@jsonp_response_headers['Content-Type']).to eq('application/javascript; charset=utf-8')
     end
 
     it 'should wrap the response body in the Javasript callback' do
-      @jsonp_response_body.should == ["#{@callback}(#{@response_body.first});"]
+      expect(@jsonp_response_body).to eq(["#{@callback}(#{@response_body.first});"])
     end
-
   end
 
-
   describe 'when a jsonp request is made wihtout a callback parameter present' do
-
     before :each do
       @request = Rack::MockRequest.env_for('/action.jsonp')
       @jsonp_response = Rack::JSONP.new(@app).call(@request)
@@ -83,21 +78,19 @@ describe Rack::JSONP do
     end
 
     it 'should set the response status to 400' do
-      @jsonp_response_status.should == 400
+      expect(@jsonp_response_status).to eq(400)
     end
 
     it 'should return an empty body' do
-      @jsonp_response_body.should == []
+      expect(@jsonp_response_body).to eq([])
     end
 
     it 'should return empty headers' do
-      @jsonp_response_headers.should == {}
+      expect(@jsonp_response_headers).to eq({})
     end
-
   end
 
   describe 'when a jsonp request is made with an invalid callback' do
-
     before :each do
       @callback = "alert('window.cookies');cb"
       @request = Rack::MockRequest.env_for("/action.jsonp?callback=#{@callback}")
@@ -106,20 +99,19 @@ describe Rack::JSONP do
     end
 
     it 'should set the response status to 400' do
-      @jsonp_response_status.should == 400
+      expect(@jsonp_response_status).to eq(400)
     end
 
     it 'should return an empty body' do
-      @jsonp_response_body.should == []
+      expect(@jsonp_response_body).to eq([])
     end
 
     it 'should return empty headers' do
-      @jsonp_response_headers.should == {}
+      expect(@jsonp_response_headers).to eq({})
     end
   end
 
   describe 'when a non jsonp request is made' do
-
     before :each do
       @request = Rack::MockRequest.env_for('/action.json')
       @jsonp_response = Rack::JSONP.new(@app).call(@request)
@@ -127,21 +119,19 @@ describe Rack::JSONP do
     end
 
     it 'should not modify the response status' do
-      @jsonp_response_status.should == @response_status
+      expect(@jsonp_response_status).to eq(@response_status)
     end
 
     it 'should not modify the response headers' do
-      @jsonp_response_headers.should == @response_headers
+      expect(@jsonp_response_headers).to eq(@response_headers)
     end
 
     it 'should not modify the response body' do
-      @jsonp_response_body.should == @response_body
+      expect(@jsonp_response_body).to eq(@response_body)
     end
-
   end
 
   describe 'when the original response is not json' do
-
     before :each do
       @response_status = 403
       @response_headers = {
@@ -156,17 +146,16 @@ describe Rack::JSONP do
     end
 
     it 'should not modify the response body' do
-      @jsonp_response_body.should == @response_body
+      expect(@response_body).to eq(@response_body)
     end
 
     it 'should not odify the headers Content-Type' do
-      @jsonp_response_headers['Content-Type'].should == @response_headers['Content-Type']
+      expect(@jsonp_response_headers['Content-Type']).to eq(@response_headers['Content-Type'])
     end
 
     it 'should not modify the headers Content-Lenght' do
-      @jsonp_response_headers['Content-Lenght'].should == @response_headers['Content-Lenght']
+      expect(@jsonp_response_headers['Content-Lenght']).to eq(@response_headers['Content-Lenght'])
     end
-
   end
 
   describe 'when configured to be triggered by the presence of `callback` alone' do
@@ -181,7 +170,7 @@ describe Rack::JSONP do
     end
 
     it 'should wrap the response body in the JavaScript callback' do
-      @jsonp_response_body.should == ["#{@callback}(#{@response_body.first});"]
+      expect(@jsonp_response_body).to eq(["#{@callback}(#{@response_body.first});"])
     end
   end
 
@@ -195,7 +184,7 @@ describe Rack::JSONP do
 
     # Reference: http://miki.it/blog/2014/7/8/abusing-jsonp-with-rosetta-flash/
     it 'it prepends /**/ to the javascript output to thwart attacks' do
-      @jsonp_response_body.should == ["#{@callback}(#{@response_body.first});"]
+      expect(@jsonp_response_body).to eq(["#{@callback}(#{@response_body.first});"])
     end
   end
 end

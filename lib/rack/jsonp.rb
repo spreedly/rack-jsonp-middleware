@@ -1,8 +1,6 @@
-
 require 'pathname'
 
 module Rack
-
   class JSONP
 
     def initialize(app, options={})
@@ -30,7 +28,7 @@ module Rack
         body.each { |s| json << s }
         security_str = @extra_security ? '/**/' : ''
         body = ["#{security_str}#{callback}(#{json});"]
-        headers['Content-Length'] = Rack::Utils.bytesize(body[0]).to_s
+        headers['Content-Length'] = body.first.bytesize.to_s
         headers['Content-Type'] = headers['Content-Type'].sub(/^[^;]+(;?)/, "#{MIME_TYPE}\\1")
       end
 
